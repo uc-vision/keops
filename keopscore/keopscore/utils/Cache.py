@@ -71,10 +71,18 @@ class Cache_partial:
         self.use_cache_file = use_cache_file
         if self.use_cache_file:
             self.cache_file = os.path.join(save_folder, cls.__name__ + "_cache.pkl")
-            if os.path.isfile(self.cache_file):
-                f = open(self.cache_file, "rb")
-                self.library_params = pickle.load(f)
-                f.close()
+
+            try:
+              if os.path.isfile(self.cache_file):
+                  f = open(self.cache_file, "rb")
+                  self.library_params = pickle.load(f)
+                  f.close()
+
+                  
+            except IOError:  
+                # EOFError Frequently occurs when the program using keops is uncleanly shut down
+                pass
+            
             else:
                 self.library_params = {}
             import atexit
